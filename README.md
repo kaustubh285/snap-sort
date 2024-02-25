@@ -89,9 +89,3 @@ Ollama needs to be installed from the website (ollama.com). Additionally, llava 
 - Pillow
 
 - OpenCV
-
-## License
-
-This project is licensed under the MIT License
-
-Feel free to explore, modify, and share the script! If you encounter any issues or have suggestions for improvements, please open an issue on the [GitHub repository](https://github.com/kaustubh285/snap-sort).
