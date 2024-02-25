@@ -38,7 +38,7 @@ imageOrganizer =  ImageOrganizer(model_name="llava:7b")
 
 path = os.getcwd()  +  "/images/"
 
-imageOrganizer.start_processing(path)
+imageOrganizer.start_processing(path=path,  categories=[{"name":  "coding",  "keywords":  ["coding",  "programming",  "code"]},{"name":  "studies",  "keywords":  ["study",  "learning",  "education"]}])
 
 
 
@@ -55,6 +55,12 @@ Running the script:
 python  run_organizer.py
 
 ```
+
+Note: In case of any doubts, check the sample_run_organizer.py file for structure.
+
+## Supported formats
+
+The script currently supports jpg, jpeg, png and heic formats.
 
 ## Configuration
 

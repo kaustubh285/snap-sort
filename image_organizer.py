@@ -12,43 +12,55 @@ class ImageOrganizer:
         # self.folder_path = kwargs["folder_path"]
         # if kwargs["folder_path"] == "":
         #     self.folder_path = os.getcwd() + "/test/"
-
+        self.default_categories = [
+            {"name": "coding", "keywords": ["coding", "programming", "code"]},
+            {"name": "studies", "keywords": ["study", "learning", "education"]},
+            {
+                "name": "recreation",
+                "keywords": ["entertainment", "fun", "recreation"],
+            },
+            {"name": "document", "keywords": ["document", "text", "paper"]},
+        ]
         self.model_name = kwargs["model_name"]
         if kwargs["model_name"] == "":
             self.model_name = "llava:7b"
         return
 
     def start_processing(self, path, categories) -> None:
+        try:
+            # Guard clause for the path
+            if path == "":
+                path = os.getcwd() + ""
 
-        # Guard clause for the path
-        if path == "":
-            path = os.getcwd() + ""
+            if len(categories) == 0:
+                categories = self.default_categories
+            self.folder_path = path
+            # Execution start time
+            st = time.time()
 
-        self.folder_path = path
-        # Execution start time
-        st = time.time()
+            # Gets all the png images from the path
+            image_list = self._get_images(path)
 
-        # Gets all the png images from the path
-        image_list = self._get_images(path)
+            if len(image_list) == 0:
+                print("No images to be sorted in the folder. Target:" + path)
+            else:
+                print("{0} image(s) found. Sorting them now.".format(len(image_list)))
 
-        if len(image_list) == 0:
-            print("No images to be sorted in the folder. Target:" + path)
-        else:
-            print("{0} image(s) found. Sorting them now.".format(len(image_list)))
+            for image_path in image_list:
+                try:
+                    self._process_image(image_path, categories)
+                except Exception as e:
+                    print(e)
 
-        for image_path in image_list:
-            try:
-                self._process_image(image_path, categories)
-            except Exception as e:
-                print(e)
-                print("An Error occured. Check the following")
-                print("1)Path is correct")
-                print("2)Ollama is running")
-                print("3)Model is installed")
-
-        et = time.time()
-        elapsed_time = et - st
-        print("Execution time:", elapsed_time, "seconds")
+            et = time.time()
+            elapsed_time = et - st
+            print("Execution time:", elapsed_time, "seconds")
+        except:
+            print("An Error occured. Check the following")
+            print("1) Path is correct")
+            print("2) Ollama is running")
+            print("3) Categories follow the proper structure")
+            print("4) Model is installed")
 
     def _get_images(self, folder_path):
         images = []
@@ -94,17 +106,6 @@ class ImageOrganizer:
         for category in categories:
             if any(keyword in keywords for keyword in category["keywords"]):
                 return category["name"]
-            # if any(keyword in keywords for keyword in ["coding", "programming", "code"]):
-            #     return "coding"
-            # elif any(keyword in keywords for keyword in ["study", "learning", "education"]):
-            #     return "studies"
-            # elif any(
-            #     keyword in keywords for keyword in ["entertainment", "fun", "recreation"]
-            # ):
-            #     return "recreation"
-            # elif any(keyword in keywords for keyword in ["document", "text", "paper"]):
-            #     return "document"
-            # else:
         return "others"
 
     def _organize_image(self, image_path, category):
@@ -116,6 +117,3 @@ class ImageOrganizer:
         new_image_path = os.path.join(destination_folder, os.path.basename(image_path))
         os.replace(image_path, new_image_path)
         print(f"Image moved to: {new_image_path}")
-
-
-imageOrganizer = ImageOrganizer(folder_path="", model_name="llava:7b")
